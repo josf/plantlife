@@ -2,10 +2,17 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [plantlife.views :as v]
+            [plantlife.zip :as plz]
+            [clojure.zip :as zip]
             [plantlife.branches :as b]))
 
-(defonce app-state (atom {:text "Hello Chestnut!"
-                          :branches [(b/make-fork 0 0 80 45)]}))
+(defonce app-state
+  (atom {:text "Hello Chestnut!"
+         :branches (zip/node
+                     (b/build-tree
+                       (plz/plant-zip (b/root-branch 0 0 50 45))
+                       2
+                       b/derive-north b/derive-south))}))
 
 (defn main []
   (om/root

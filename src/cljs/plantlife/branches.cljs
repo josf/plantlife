@@ -74,21 +74,9 @@
       derive-south-fn)))
 
 
-(defn next-branch-template
-  [angle-delta origin-x origin-y length prev-angle depth]
-  (let [north-angle  (+ prev-angle angle-delta)
-        [dest-x dest-y] (coords-at-r-angle origin-x origin-y length north-angle)]
-    {:origin-x origin-x :origin-y origin-y
-     :dest-x dest-x :dest-y dest-y
-     :angle north-angle
-     :depth (inc depth)}))
-
-(def next-north-branch (partial next-branch-template 20))
-(def next-south-branch (partial next-branch-template -20))
-
 (defn complete-tree [origin-x origin-y length sun-angle max-depth]
   (build-tree
     (plz/plant-zip (root-branch origin-x origin-y length sun-angle))
     max-depth
-    next-north-branch
-    next-south-branch))
+    derive-north-fn
+    derive-south-fn))

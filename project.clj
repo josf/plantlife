@@ -20,7 +20,8 @@
                  [sablono "0.2.22"]]
 
   :plugins [[lein-cljsbuild "1.0.3"]
-            [lein-environ "1.0.0"]]
+            [lein-environ "1.0.0"]
+            [cider/cider-nrepl "0.9.0-SNAPSHOT"]]
 
   :min-lein-version "2.5.0"
 

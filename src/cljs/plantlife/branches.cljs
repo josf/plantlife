@@ -28,23 +28,37 @@
      :dest-x dest-x
      :dest-y dest-y
      :angle sun-angle
+     :base-length length
      :length length}))
+
+
+(defn derive-new-angle [base negative depth]
+  (Math.floor
+    (let [depth-calc (if (= 0 depth) 1 depth)]
+      ((if negative - +) base (/ 20 depth-calc)))))
+
+(defn derive-new-length [base-length]
+  (Math.floor
+    (* base-length (+ .3 (rand 1.4)))))
 
 (defn derive-next [angle-coef loc]
   (let [nd (zip/node loc)
-        new-angle (Math.floor (* angle-coef (:angle nd)))
+        depth (count (zip/path loc))
+        new-length (derive-new-length (:base-length nd))
+        new-angle (derive-new-angle (:angle nd) (pos? angle-coef) depth)
         [dest-x dest-y] (coords-at-r-angle
-                          (:dest-x nd) (:dest-y nd) (:length nd) new-angle)
+                          (:dest-x nd) (:dest-y nd) new-length new-angle)
         new-node {:origin-x (:dest-x nd)
                   :origin-y (:dest-y nd)
                   :dest-x dest-x
                   :dest-y dest-y
                   :angle new-angle
-                  :length (:length nd)}]
+                  :length new-length
+                  :base-length (:base-length nd)}]
     new-node))
 
-(def derive-north (partial derive-next 1.2))
-(def derive-south (partial derive-next 0.8))
+(def derive-north (partial derive-next 15))
+(def derive-south (partial derive-next -15))
 
 (defn build-tree [loc max-depth derive-north-fn derive-south-fn]
   "derive-north-fn and derive-south-fn take locs so they can be (and

@@ -14,19 +14,16 @@
 
 
 (defn branch-section
-  ([{origin-x :origin-x origin-y :origin-y dest-x :dest-x
-     dest-y :dest-y dest-x-cp :dest-x-cp dest-y-cp :dest-y-cp}]
-   (branch-section [origin-x origin-y] [dest-x dest-y] [dest-x-cp dest-y-cp]))
-  ([[origin-x origin-y] [dest-x dest-y] [dest-x-cp dest-y-cp]]
-   [:path {:d (apply str
-                (interpose " "
-                  ["M" origin-x origin-y
-                   "C" (+ origin-x 20) (- origin-y 20) "," (- dest-x 20) (+ dest-y 20) "," dest-x dest-y]))
-           :stroke "green" :stroke-width 8 :stroke-linecap "round" :fill "transparent"}]))
+  [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp origin-x-cp origin-y-cp] }]
+  [:path {:d (apply str
+               (interpose " "
+                 ["M" origin-x origin-y
+                  "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," dest-x dest-y]))
+          :stroke "green" :stroke-width 8 :stroke-linecap "round" :fill "transparent"}])
 
 
 (defn derive-control-points [length angle dest-x dest-y]
-  [(- dest-x 20) (- dest-y 20)])
+  [(- dest-x 20) dest-y])
 
 (defn root-branch [origin-x origin-y length sun-angle]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
@@ -37,6 +34,8 @@
      :dest-y dest-y
      :dest-x-cp dest-x-cp
      :dest-y-cp dest-y-cp
+     :origin-x-cp (+ origin-x 10)
+     :origin-y-cp origin-y
      :angle sun-angle
      :base-length length
      :length length}))
@@ -51,6 +50,11 @@
   (Math.floor
     (* base-length (+ .3 (rand 1.4)))))
 
+(defn mirror-vector
+  [x1 y1 x2 y2]
+  [(+ (- x2 x1) x2)
+   (+ (- y2 y1) y2)])
+
 (defn derive-next [angle-coef loc]
   (let [nd (zip/node loc)
         depth (count (zip/path loc))
@@ -59,8 +63,12 @@
         [dest-x dest-y] (coords-at-r-angle
                           (:dest-x nd) (:dest-y nd) new-length new-angle)
         [dest-x-cp dest-y-cp] (derive-control-points new-length new-angle dest-x dest-y)
+        [origin-x-cp origin-y-cp] (mirror-vector
+                                    (:dest-x-cp nd) (:dest-y-cp nd) (:dest-x nd) (:dest-y nd))
         new-node {:origin-x (:dest-x nd)
                   :origin-y (:dest-y nd)
+                  :origin-x-cp origin-x-cp
+                  :origin-y-cp origin-y-cp
                   :dest-x dest-x
                   :dest-y dest-y
                   :dest-x-cp dest-x-cp

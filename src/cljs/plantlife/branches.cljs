@@ -14,19 +14,29 @@
 
 
 (defn branch-section
-  ([{origin-x :origin-x origin-y :origin-y dest-x :dest-x dest-y :dest-y}]
-   (branch-section [origin-x origin-y] [dest-x dest-y]))
-  ([[origin-x origin-y] [dest-x dest-y]]
-   [:path {:d (apply str (interpose " " ["M" origin-x origin-y "L" dest-x dest-y]))
-           :stroke "green" :stroke-width 5 :stroke-linecap "round" :fill "transparent"}]))
+  ([{origin-x :origin-x origin-y :origin-y dest-x :dest-x
+     dest-y :dest-y dest-x-cp :dest-x-cp dest-y-cp :dest-y-cp}]
+   (branch-section [origin-x origin-y] [dest-x dest-y] [dest-x-cp dest-y-cp]))
+  ([[origin-x origin-y] [dest-x dest-y] [dest-x-cp dest-y-cp]]
+   [:path {:d (apply str
+                (interpose " "
+                  ["M" origin-x origin-y
+                   "C" (+ origin-x 20) (- origin-y 20) "," (- dest-x 20) (+ dest-y 20) "," dest-x dest-y]))
+           :stroke "green" :stroke-width 8 :stroke-linecap "round" :fill "transparent"}]))
 
+
+(defn derive-control-points [length angle dest-x dest-y]
+  [(- dest-x 20) (- dest-y 20)])
 
 (defn root-branch [origin-x origin-y length sun-angle]
-  (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)]
+  (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
+        [dest-x-cp dest-y-cp] (derive-control-points length sun-angle dest-x dest-y)]
     {:origin-x origin-x
      :origin-y origin-y
      :dest-x dest-x
      :dest-y dest-y
+     :dest-x-cp dest-x-cp
+     :dest-y-cp dest-y-cp
      :angle sun-angle
      :base-length length
      :length length}))
@@ -48,10 +58,13 @@
         new-angle (derive-new-angle (:angle nd) (pos? angle-coef) depth)
         [dest-x dest-y] (coords-at-r-angle
                           (:dest-x nd) (:dest-y nd) new-length new-angle)
+        [dest-x-cp dest-y-cp] (derive-control-points new-length new-angle dest-x dest-y)
         new-node {:origin-x (:dest-x nd)
                   :origin-y (:dest-y nd)
                   :dest-x dest-x
                   :dest-y dest-y
+                  :dest-x-cp dest-x-cp
+                  :dest-y-cp dest-y-cp
                   :angle new-angle
                   :length new-length
                   :base-length (:base-length nd)}]

@@ -105,5 +105,5 @@
   (build-tree
     (plz/plant-zip (root-branch origin-x origin-y length sun-angle))
     max-depth
-    derive-north-fn
-    derive-south-fn))
+    derive-north
+    derive-south))

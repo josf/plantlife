@@ -21,7 +21,6 @@
         om/IRender
         (render [_]
           (dom/div nil
-           (dom/h1 nil (:text app))
            (om/build v/svg-view (:branches app) nil)))))
     app-state
     {:target (. js/document (getElementById "app"))}))

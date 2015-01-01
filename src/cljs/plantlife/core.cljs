@@ -10,8 +10,8 @@
   (atom {:text "Hello Chestnut!"
          :branches (zip/node
                      (b/build-tree
-                       (plz/plant-zip (b/root-branch 0 0 50 45))
-                       2
+                       (plz/plant-zip (b/root-branch 0 790 100 -45))
+                       5
                        b/derive-north b/derive-south))}))
 
 (defn main []

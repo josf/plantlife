@@ -14,20 +14,20 @@
 
 
 (defn branch-section
-  [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp origin-x-cp origin-y-cp] }]
+  [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp origin-x-cp origin-y-cp depth]}]
   [:path {:d (apply str
                (interpose " "
                  ["M" origin-x origin-y
                   "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," dest-x dest-y]))
-          :stroke "green" :stroke-width 8 :stroke-linecap "round" :fill "transparent"}])
+          :stroke "green" :stroke-width (- 24 (* 4 depth)) :stroke-linecap "round" :fill "transparent"}])
 
 
 (defn derive-control-points [length angle dest-x dest-y]
   (coords-at-r-angle
     dest-x
     dest-y
-    (Math.floor (* .5 length))
-    (+ angle 90)))
+    (Math.floor (* .3 length))
+    ((if (= 0 (rand-int 2)) + -) angle 120)))
 
 (defn root-branch [origin-x origin-y length sun-angle]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
@@ -42,7 +42,8 @@
      :origin-y-cp origin-y
      :angle sun-angle
      :base-length length
-     :length length}))
+     :length length
+     :depth 0}))
 
 
 (defn derive-new-angle [base negative depth]
@@ -50,9 +51,9 @@
     (let [depth-calc (if (= 0 depth) 1 depth)]
       ((if negative - +) base (/ 20 depth-calc)))))
 
-(defn derive-new-length [base-length]
+(defn derive-new-length [base-length depth]
   (Math.floor
-    (* base-length (+ .3 (rand 1.4)))))
+    (* base-length (+ .1 (rand 1.8)) (+ 1 (* 2 (/ depth 10))))))
 
 (defn mirror-vector
   [x1 y1 x2 y2]
@@ -62,7 +63,7 @@
 (defn derive-next [angle-coef loc]
   (let [nd (zip/node loc)
         depth (count (zip/path loc))
-        new-length (derive-new-length (:base-length nd))
+        new-length (derive-new-length (:base-length nd) depth)
         new-angle (derive-new-angle (:angle nd) (pos? angle-coef) depth)
         [dest-x dest-y] (coords-at-r-angle
                           (:dest-x nd) (:dest-y nd) new-length new-angle)
@@ -79,7 +80,8 @@
                   :dest-y-cp dest-y-cp
                   :angle new-angle
                   :length new-length
-                  :base-length (:base-length nd)}]
+                  :base-length (:base-length nd)
+                  :depth depth}]
     new-node))
 
 (def derive-north (partial derive-next 15))

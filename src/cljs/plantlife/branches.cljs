@@ -23,7 +23,11 @@
 
 
 (defn derive-control-points [length angle dest-x dest-y]
-  [(- dest-x 20) dest-y])
+  (coords-at-r-angle
+    dest-x
+    dest-y
+    (Math.floor (* .5 length))
+    (+ angle 90)))
 
 (defn root-branch [origin-x origin-y length sun-angle]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)

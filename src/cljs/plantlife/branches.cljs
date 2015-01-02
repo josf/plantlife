@@ -19,7 +19,9 @@
                (interpose " "
                  ["M" origin-x origin-y
                   "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," dest-x dest-y]))
-          :stroke "green" :stroke-width (- 24 (* 4 depth)) :stroke-linecap "round" :fill "transparent"}])
+          :stroke "green" :stroke-width (- 24 (* 4 depth))
+          :stroke-linecap "round"
+          :fill "transparent"}])
 
 
 (defn derive-control-points [length angle dest-x dest-y]

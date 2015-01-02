@@ -38,6 +38,8 @@
      :origin-y origin-y
      :dest-x dest-x
      :dest-y dest-y
+     :current-x origin-x
+     :current-y origin-y
      :dest-x-cp dest-x-cp
      :dest-y-cp dest-y-cp
      :origin-x-cp (+ origin-x 10)
@@ -47,7 +49,6 @@
      :length length
      :depth 0
      :children []}))
-
 
 (defn derive-new-angle [base negative depth]
   (Math.floor
@@ -77,6 +78,8 @@
                   :origin-y (:dest-y nd)
                   :origin-x-cp origin-x-cp
                   :origin-y-cp origin-y-cp
+                  :current-x (:dest-x nd)
+                  :current-y (:dest-y nd)
                   :dest-x dest-x
                   :dest-y dest-y
                   :dest-x-cp dest-x-cp
@@ -126,7 +129,6 @@
     derive-north
     derive-south))
 
-
 (defn min-avail-leaf-depth
   "Find the minium tree depth of branch nodes that could have at
   least one more child branch."
@@ -138,14 +140,17 @@
                         (> 2 (count (zip/children l)))))
         (take-while (complement zip/end?) (iterate zip/next z))))))
 
-
 (defn next-available-branch [loc min-depth]
   (first
     (filter
       (fn [l]
-        (and (zip/branch? l)
-          (= min-depth (count (zip/path l)))
-          (> 2 (count (zip/children l)))))
+        (let [nd (zip/node l)]
+          (and
+            (zip/branch? l)
+            (= min-depth (count (zip/path l)))
+            (= (:current-x nd) (:dest-x nd))
+            (= (:current-y nd) (:dest-y nd))
+            (> 2 (count (zip/children l))))))
       (take-while (complement zip/end?) (iterate zip/next loc)))))
 
 (defn add-next-branch [branches-cursor]
@@ -172,3 +177,57 @@
         (if new-branches
           (zip/root new-branches)
           branches-cursor)))))
+
+
+(defn increment-branch-lengths
+  [origin-x origin-y dest-x dest-y current-x current-y]
+  (let [x-diff (- dest-x origin-x)
+        y-diff (- dest-y origin-y)
+        x-incr (if (> (Math.abs (/ x-diff 40)) 1)
+                 (/ x-diff 40)
+                 (if (pos? x-diff) 1 -1))
+        y-incr (if (> (Math.abs (/ y-diff 40)) 1)
+                 (/ y-diff 40)
+                 (if (pos? y-diff) 1 -1))]
+    [(if (> (Math.abs x-incr) (Math.abs (- dest-x current-x)))
+       dest-x
+       (Math.floor (+ current-x x-incr)))
+
+     (if (> (Math.abs y-incr) (Math.abs (- dest-y current-y)))
+       dest-y
+       (Math.floor (+ current-y y-incr)))]))
+
+
+(defn step-incomplete-branches [branches-cursor]
+  (zip/root 
+   (loop [loc (plz/plant-zip branches-cursor)]
+     (cond
+       (zip/end? loc)
+       loc
+      
+       (not (zip/branch? loc))
+       (recur (zip/next loc))
+
+       (and
+         (= (:current-x (zip/node loc))
+           (:dest-x (zip/node loc)))
+         (= (:current-y (zip/node loc))
+           (:dest-y (zip/node loc))))
+       (recur (zip/next loc))
+
+       true
+       (recur
+         (zip/next
+           (zip/edit
+             loc
+             (fn [n]
+               (let [[new-x new-y] (increment-branch-lengths
+                                     (:origin-x n)
+                                     (:origin-y n)
+                                     (:dest-x n)
+                                     (:dest-y n)
+                                     (:current-x n)
+                                     (:current-y n))]
+                 (assoc n
+                   :current-x new-x
+                   :current-y new-y))))))))))

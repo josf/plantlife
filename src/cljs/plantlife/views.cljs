@@ -17,12 +17,13 @@
 
     om/IRenderState
     (render-state [_ state]
-      (let [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp origin-x-cp origin-y-cp depth]} branch]
+      (let [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp
+                    origin-x-cp origin-y-cp current-x current-y depth complete]} branch]
         (html
           [:path {:d  (apply str
                         (interpose " "
                           ["M" origin-x origin-y
-                           "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," dest-x dest-y]))
+                           "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," current-x current-y]))
                   :stroke "green" :stroke-width (- 24 (* 4 depth))
                   :stroke-linecap "round"
                   :fill "transparent"}])))))
@@ -36,8 +37,14 @@
     (will-mount [_]
       (js/setInterval
         (fn []
-          (om/transact! branches b/add-next-branch))
-        500))
+         (om/transact! branches b/add-next-branch)
+          )
+        500)
+      (js/setInterval
+        (fn []
+          (om/transact! branches b/step-incomplete-branches)
+          )
+        16))
 
     
     om/IRenderState

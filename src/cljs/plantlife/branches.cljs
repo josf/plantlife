@@ -45,7 +45,8 @@
      :angle sun-angle
      :base-length length
      :length length
-     :depth 0}))
+     :depth 0
+     :children []}))
 
 
 (defn derive-new-angle [base negative depth]
@@ -83,7 +84,8 @@
                   :angle new-angle
                   :length new-length
                   :base-length (:base-length nd)
-                  :depth depth}]
+                  :depth depth
+                  :children []}]
     new-node))
 
 (def derive-north (partial derive-next 15))

@@ -125,3 +125,50 @@
     max-depth
     derive-north
     derive-south))
+
+
+(defn min-avail-leaf-depth
+  "Find the minium tree depth of branch nodes that could have at
+  least one more child branch."
+  [z]
+  (apply min
+    (map #(count (zip/path %))
+      (filter (fn [l] (and
+                        (zip/branch? l)
+                        (> 2 (count (zip/children l)))))
+        (take-while (complement zip/end?) (iterate zip/next z))))))
+
+
+(defn next-available-branch [loc min-depth]
+  (first
+    (filter
+      (fn [l]
+        (and (zip/branch? l)
+          (= min-depth (count (zip/path l)))
+          (> 2 (count (zip/children l)))))
+      (take-while (complement zip/end?) (iterate zip/next loc)))))
+
+(defn add-next-branch [branches-cursor]
+  (let [max-depth 5
+        bzip (plz/plant-zip branches-cursor)
+        min-depth (min-avail-leaf-depth bzip)]
+
+    (if (> min-depth max-depth)
+      branches-cursor
+      (let [target-loc (next-available-branch bzip min-depth)
+            new-branches (when target-loc
+                           (zip/edit
+                             target-loc
+                             (fn [n]
+                               (cond
+                                 (zero? (count (:children n)))
+                                (assoc n :children [(derive-north target-loc)])
+
+                                (= 1 (count (:children n)))
+                                (assoc n :children
+                                  (conj (:children n)
+                                    (derive-south target-loc)))))))]
+      
+        (if new-branches
+          (zip/root new-branches)
+          branches-cursor)))))

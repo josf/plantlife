@@ -32,9 +32,16 @@
     om/IDisplayName
     (display-name [_] "SvgRoot")
 
+    om/IWillMount
+    (will-mount [_]
+      (js/setInterval
+        (fn []
+          (om/transact! branches b/add-next-branch))
+        500))
+
+    
     om/IRenderState
     (render-state [_ state]
-      (println branches)
       (html
         (vec
          (concat

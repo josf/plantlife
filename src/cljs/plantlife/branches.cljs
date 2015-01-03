@@ -183,11 +183,11 @@
   [origin-x origin-y dest-x dest-y current-x current-y]
   (let [x-diff (- dest-x origin-x)
         y-diff (- dest-y origin-y)
-        x-incr (if (> (Math.abs (/ x-diff 40)) 1)
-                 (/ x-diff 40)
+        x-incr (if (> (Math.abs (/ x-diff 80)) 1)
+                 (/ x-diff 80)
                  (if (pos? x-diff) 1 -1))
-        y-incr (if (> (Math.abs (/ y-diff 40)) 1)
-                 (/ y-diff 40)
+        y-incr (if (> (Math.abs (/ y-diff 80)) 1)
+                 (/ y-diff 80)
                  (if (pos? y-diff) 1 -1))]
     [(if (> (Math.abs x-incr) (Math.abs (- dest-x current-x)))
        dest-x

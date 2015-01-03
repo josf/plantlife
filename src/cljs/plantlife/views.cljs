@@ -43,13 +43,11 @@
     (will-mount [_]
       (js/setInterval
         (fn []
-         (om/transact! branches b/add-next-branch)
-          )
+         (om/transact! branches b/add-next-branch))
         500)
       (js/setInterval
         (fn []
-          (om/transact! branches b/step-incomplete-branches)
-          )
+          (om/transact! branches b/step-incomplete-branches))
         16))
 
     

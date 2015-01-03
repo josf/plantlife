@@ -17,13 +17,19 @@
 
     om/IRenderState
     (render-state [_ state]
-      (let [{:keys [origin-x origin-y dest-x dest-y dest-x-cp dest-y-cp
-                    origin-x-cp origin-y-cp current-x current-y depth complete]} branch]
+      (let [{:keys [origin-x origin-y dest-x dest-y length angle dest-x-cp dest-y-cp
+                    origin-x-cp origin-y-cp current-x current-y depth complete]} branch
+                    
+                    current-x-cp current-x
+                    current-y-cp current-y
+
+                    actual-x-cp (if (= dest-x current-x) dest-x-cp current-x-cp)
+                    actual-y-cp (if (= dest-y current-y) dest-y-cp current-y-cp)]
         (html
-          [:path {:d  (apply str
-                        (interpose " "
-                          ["M" origin-x origin-y
-                           "C" origin-x-cp origin-y-cp "," dest-x-cp dest-y-cp "," current-x current-y]))
+          [:path {:d (apply str
+                       (interpose " "
+                         ["M" origin-x origin-y
+                          "C" origin-x-cp origin-y-cp "," actual-x-cp actual-y-cp "," current-x current-y]))
                   :stroke "green" :stroke-width (- 24 (* 4 depth))
                   :stroke-linecap "round"
                   :fill "transparent"}])))))

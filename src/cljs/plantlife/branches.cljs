@@ -31,6 +31,13 @@
     (Math.floor (* .3 length))
     ((if (= 0 (rand-int 2)) + -) angle 120)))
 
+(defn seg-length [origin-x origin-y dest-x dest-y]
+  (let [x-diff (- (max origin-x dest-x) (min origin-x dest-x))
+        y-diff (- (max origin-y dest-y) (min origin-y dest-y))]
+    (Math.floor
+      (Math.sqrt
+        (+ (Math.pow x-diff 2) (Math.pow y-diff 2))))))
+
 (defn root-branch [origin-x origin-y length sun-angle]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
         [dest-x-cp dest-y-cp] (derive-control-points length sun-angle dest-x dest-y)]

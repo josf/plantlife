@@ -5,10 +5,13 @@ Om framework.
 
 ## Description
 
+The vine is a strange plant that has no leaves and can be easily
+modeled as a balanced binary tree.
+
 
 ## License
 
-Copyright © 2014 FIXME
+Copyright © 2014 Joseph Fahey
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

@@ -8,15 +8,7 @@
             [plantlife.palettes :as palettes]))
 
 (defonce app-state
-  (atom {:text "Hello Chestnut!"
-         :branches  (b/root-branch 0 790 100 -45 (:green palettes/palettes) )}))
-
-(comment (zip/node
-           (b/build-tree
-             (plz/plant-zip (b/root-branch 0 790 100 -45 (:green palettes/palettes)))
-             5
-             b/derive-north b/derive-south)))
-
+  (atom {:branches  (b/root-branch 0 790 100 -45 (:green palettes/palettes) )}))
 
 (defn main []
   (om/root

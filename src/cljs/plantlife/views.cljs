@@ -18,7 +18,7 @@
     om/IRenderState
     (render-state [_ state]
       (let [{:keys [origin-x origin-y dest-x dest-y length angle dest-x-cp dest-y-cp
-                    origin-x-cp origin-y-cp current-x current-y depth complete]} branch
+                    origin-x-cp origin-y-cp current-x current-y depth]} branch
                     
                     current-x-cp current-x
                     current-y-cp current-y
@@ -39,18 +39,31 @@
     om/IDisplayName
     (display-name [_] "SvgRoot")
 
+
     om/IWillMount
     (will-mount [_]
       (js/setInterval
         (fn []
          (om/transact! branches b/add-next-branch))
         500)
+
       (js/setInterval
         (fn []
           (om/transact! branches b/step-incomplete-branches))
-        16))
+        16)
 
-    
+      (js/setInterval
+        (fn []
+          (om/transact! branches
+            (fn [br]
+              (let [bzip  (plz/plant-zip br)]
+                (if (and
+                      (b/branches-full? bzip)
+                      (b/all-branches-full-length? bzip))
+                  (b/root-branch 400 800 100 -90)
+                  br)))))
+        505))
+
     om/IRenderState
     (render-state [_ state]
       (html

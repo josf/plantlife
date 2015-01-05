@@ -147,17 +147,24 @@
                         (> 2 (count (zip/children l)))))
         (take-while (complement zip/end?) (iterate zip/next z))))))
 
+
+(defn full-length-branch?
+  "current-x and current-y equal dest-x and dest-y"
+  [loc]
+  (let [nd (zip/node loc)]
+   (and
+     (= (:current-x nd) (:dest-x nd))
+     (= (:current-y nd) (:dest-y nd)))))
+
 (defn next-available-branch [loc min-depth]
   (first
     (filter
       (fn [l]
-        (let [nd (zip/node l)]
-          (and
-            (zip/branch? l)
-            (= min-depth (count (zip/path l)))
-            (= (:current-x nd) (:dest-x nd))
-            (= (:current-y nd) (:dest-y nd))
-            (> 2 (count (zip/children l))))))
+        (and
+          (zip/branch? l)
+          (= min-depth (count (zip/path l)))
+          (full-length-branch? l)
+          (> 2 (count (zip/children l)))))
       (take-while (complement zip/end?) (iterate zip/next loc)))))
 
 (defn add-next-branch [branches-cursor]
@@ -165,7 +172,7 @@
         bzip (plz/plant-zip branches-cursor)
         min-depth (min-avail-leaf-depth bzip)]
 
-    (if (> min-depth max-depth)
+    (if (>= min-depth max-depth)
       branches-cursor
       (let [target-loc (next-available-branch bzip min-depth)
             new-branches (when target-loc
@@ -185,6 +192,16 @@
           (zip/root new-branches)
           branches-cursor)))))
 
+(defn branches-full? [loc]
+  (let [filtered  (filter
+                    (fn [l]
+                      (and
+                        (zip/branch? l)
+                        (= (count (zip/path l)) 5)))
+                    (take-while (complement zip/end?) (iterate zip/next loc)))]
+    (and
+      (not (empty? filtered))
+      (every? full-length-branch? filtered))))
 
 (defn increment-branch-lengths
   [origin-x origin-y dest-x dest-y current-x current-y]
@@ -205,6 +222,14 @@
        (Math.floor (+ current-y y-incr)))]))
 
 
+(defn all-branches-full-length? [branches-zip]
+  (every?
+    #(full-length-branch? %)
+    (filter zip/branch?
+      (take-while
+        (complement zip/end?)
+        (iterate zip/next branches-zip)))))
+
 (defn step-incomplete-branches [branches-cursor]
   (zip/root 
    (loop [loc (plz/plant-zip branches-cursor)]
@@ -215,11 +240,7 @@
        (not (zip/branch? loc))
        (recur (zip/next loc))
 
-       (and
-         (= (:current-x (zip/node loc))
-           (:dest-x (zip/node loc)))
-         (= (:current-y (zip/node loc))
-           (:dest-y (zip/node loc))))
+       (full-length-branch? loc)
        (recur (zip/next loc))
 
        true

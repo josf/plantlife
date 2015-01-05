@@ -5,8 +5,7 @@
 
 (defn plant-zip [tree]
   (zip/zipper
-    ;;  branch?: all nodes can have children, but a nil value as child can't
-    (fn [n] (and n (not (vector? n))))
+    identity
     (fn [t]
       (let [cs (filter identity (:children t))]
         (when (pos? (count cs))

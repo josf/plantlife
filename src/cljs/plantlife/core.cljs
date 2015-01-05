@@ -12,7 +12,7 @@
 
 (comment (zip/node
            (b/build-tree
-             (plz/plant-zip (b/root-branch 0 790 100 -45))
+             (plz/plant-zip (b/root-branch 0 790 100 -45 "green"))
              5
              b/derive-north b/derive-south)))
 

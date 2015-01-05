@@ -24,6 +24,16 @@
           :fill "transparent"}])
 
 
+(defn choose-color [& current]
+  (let [cur (first current)]
+    (case (rand-int 5)
+      0 "blue"
+      1 "green"
+      2 "yellow"
+      3 "brown"
+      4 "red"
+      5 "purple")))
+
 (defn derive-control-points [length angle dest-x dest-y]
   (coords-at-r-angle
     dest-x
@@ -38,7 +48,7 @@
       (Math.sqrt
         (+ (Math.pow x-diff 2) (Math.pow y-diff 2))))))
 
-(defn root-branch [origin-x origin-y length sun-angle]
+(defn root-branch [origin-x origin-y length sun-angle color]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
         [dest-x-cp dest-y-cp] (derive-control-points length sun-angle dest-x dest-y)]
     {:origin-x origin-x
@@ -55,7 +65,8 @@
      :base-length length
      :length length
      :depth 0
-     :children []}))
+     :children []
+     :color color}))
 
 (defn derive-new-angle [base negative depth]
   (Math.floor
@@ -95,7 +106,8 @@
                   :length new-length
                   :base-length (:base-length nd)
                   :depth depth
-                  :children []}]
+                  :children []
+                  :color (:color nd)}]
     new-node))
 
 (def derive-north (partial derive-next 15))

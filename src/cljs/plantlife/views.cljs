@@ -2,6 +2,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [sablono.core :as html :refer-macros [html]]
+            [goog.dom :as gdom]
             [plantlife.branches :as b]
             [plantlife.zip :as plz]
             [clojure.zip :as zip]))
@@ -18,7 +19,7 @@
     om/IRenderState
     (render-state [_ state]
       (let [{:keys [origin-x origin-y dest-x dest-y length angle dest-x-cp dest-y-cp
-                    origin-x-cp origin-y-cp current-x current-y depth]} branch
+                    origin-x-cp origin-y-cp current-x current-y depth color]} branch
                     
                     current-x-cp current-x
                     current-y-cp current-y
@@ -30,7 +31,7 @@
                        (interpose " "
                          ["M" origin-x origin-y
                           "C" origin-x-cp origin-y-cp "," actual-x-cp actual-y-cp "," current-x current-y]))
-                  :stroke "green" :stroke-width (- 24 (* 4 depth))
+                  :stroke color :stroke-width (- 24 (* 4 depth))
                   :stroke-linecap "round"
                   :fill "transparent"}])))))
 
@@ -60,7 +61,7 @@
                 (if (and
                       (b/branches-full? bzip)
                       (b/all-branches-full-length? bzip))
-                  (b/root-branch 400 800 100 -90)
+                  (b/root-branch 400 800 100 -90 (b/choose-color))
                   br)))))
         505))
 

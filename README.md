@@ -12,6 +12,8 @@ modeled as a balanced binary tree.
 
 See it working [here](http://josf.github.io/plantlife)
 
+You can see it [growing here](http://josf.github.io/plantlife/).
+
 ## License
 
 Copyright © 2014 Joseph Fahey

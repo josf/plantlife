@@ -9,6 +9,8 @@ The vine is a strange plant that has no leaves and can be easily
 modeled as a balanced binary tree.
 
 
+You can see it [growing here](http://josf.github.io/plantlife/).
+
 ## License
 
 Copyright © 2014 Joseph Fahey

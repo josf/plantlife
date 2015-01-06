@@ -19,7 +19,7 @@
     om/IRenderState
     (render-state [_ state]
       (let [{:keys [origin-x origin-y dest-x dest-y length angle dest-x-cp dest-y-cp
-                    origin-x-cp origin-y-cp current-x current-y depth palette]} branch
+                    origin-x-cp origin-y-cp current-x current-y depth color]} branch
                     
                     current-x-cp current-x
                     current-y-cp current-y
@@ -31,7 +31,7 @@
                        (interpose " "
                          ["M" origin-x origin-y
                           "C" origin-x-cp origin-y-cp "," actual-x-cp actual-y-cp "," current-x current-y]))
-                  :stroke (nth palette (rand-int (count palette))) :stroke-width (- 24 (* 4 depth))
+                  :stroke color :stroke-width (- 24 (* 4 depth))
                   :stroke-linecap "round"
                   :fill "transparent"}])))))
 
@@ -62,7 +62,7 @@
                       (b/branches-full? bzip)
                       (b/all-branches-full-length? bzip))
                   (let [prev-root-color (:palette (zip/root bzip))]
-                   (b/root-branch 400 800 100 -90 (b/choose-color prev-root-color)))
+                   (b/root-branch 400 800 100 -90 (b/choose-color prev-root-color))) 
                   br)))))
         505))
 

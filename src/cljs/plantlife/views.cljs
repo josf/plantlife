@@ -59,7 +59,7 @@
    [x y ang]))
 
 
-(defn svg-view [branches owner]
+(defn svg-view [app owner]
   (reify
     om/IDisplayName
     (display-name [_] "SvgRoot")
@@ -77,8 +77,9 @@
         (om/set-state! owner :height height)
         (om/set-state! owner :width width)
 
-        (when (empty? @branches)
-          (om/transact! branches
+        ;; our initial branch when mounting for the first time
+        (when (empty? (:branches @app))
+          (om/transact! app :branches
             (fn [_]
              (b/root-branch
                (Math.floor (/ width 2))
@@ -90,17 +91,17 @@
         
         (js/setInterval
           (fn []
-            (om/transact! branches b/add-next-branch))
+            (om/transact! app :branches b/add-next-branch))
           500)
 
         (js/setInterval
           (fn []
-            (om/transact! branches b/step-incomplete-branches))
+            (om/transact! app :branches b/step-incomplete-branches))
           42)
 
         (js/setInterval
           (fn []
-            (om/transact! branches
+            (om/transact! app :branches
               (fn [br]
                 (let [bzip  (plz/plant-zip br)]
                   (if (and
@@ -124,4 +125,4 @@
         (vec
          (concat
            [:svg {:version "1.1" :width (:width state) :height (:height state)}
-            (om/build-all branch-view (all-branches (plz/plant-zip branches)))]))))))
+            (om/build-all branch-view (all-branches (plz/plant-zip (:branches app))))]))))))

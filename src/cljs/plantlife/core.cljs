@@ -8,7 +8,7 @@
             [plantlife.palettes :as palettes]))
 
 (defonce app-state
-  (atom {:branches  (b/root-branch 0 790 100 -45 (:green palettes/palettes) )}))
+  (atom {:branches []}))
 
 (defn main []
   (om/root

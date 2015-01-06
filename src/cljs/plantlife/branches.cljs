@@ -1,7 +1,8 @@
 (ns plantlife.branches
   (:require
    [clojure.zip :as zip]
-   [plantlife.zip :as plz]))
+   [plantlife.zip :as plz]
+   [plantlife.palettes :as palettes]))
 
 
 (defn coords-at-r-angle
@@ -26,13 +27,11 @@
 
 (defn choose-color [& current]
   (let [cur (first current)]
-    (case (rand-int 5)
-      0 "blue"
-      1 "green"
-      2 "yellow"
-      3 "brown"
-      4 "red"
-      5 "purple")))
+    (case (rand-int 3)
+      0 (:green palettes/palettes)
+      1 (:yellow palettes/palettes)
+      2 (:blue palettes/palettes)
+      3 (:brown palettes/palettes))))
 
 (defn derive-control-points [length angle dest-x dest-y]
   (coords-at-r-angle
@@ -48,7 +47,7 @@
       (Math.sqrt
         (+ (Math.pow x-diff 2) (Math.pow y-diff 2))))))
 
-(defn root-branch [origin-x origin-y length sun-angle color]
+(defn root-branch [origin-x origin-y length sun-angle palette]
   (let [[dest-x dest-y] (coords-at-r-angle origin-x origin-y length sun-angle)
         [dest-x-cp dest-y-cp] (derive-control-points length sun-angle dest-x dest-y)]
     {:origin-x origin-x
@@ -68,7 +67,6 @@
      :children []
      :palette palette
      :color (nth palette (rand-int (count palette)))}))
-
 
 (defn derive-new-angle [base negative depth]
   (Math.floor
@@ -143,13 +141,6 @@
       derive-north-fn
       derive-south-fn)))
 
-
-(defn complete-tree [origin-x origin-y length sun-angle max-depth]
-  (build-tree
-    (plz/plant-zip (root-branch origin-x origin-y length sun-angle))
-    max-depth
-    derive-north
-    derive-south))
 
 (defn min-avail-leaf-depth
   "Find the minium tree depth of branch nodes that could have at

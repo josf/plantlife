@@ -49,11 +49,10 @@
         delta-y (- origin-y 0)]
     (if (= 0 delta-x)
       -90
-      (-
-       (Math.floor
-         (*
-           (Math.atan2 delta-y delta-x)
-           (/ 180 Math.PI)))))))
+      (- (Math.floor
+           (*
+             (Math.atan2 delta-y delta-x)
+             (/ 180 Math.PI)))))))
 
 
 (defn random-start-point [width height]

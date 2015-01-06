@@ -51,7 +51,7 @@
       (js/setInterval
         (fn []
           (om/transact! branches b/step-incomplete-branches))
-        16)
+        42)
 
       (js/setInterval
         (fn []

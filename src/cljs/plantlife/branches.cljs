@@ -66,7 +66,9 @@
      :length length
      :depth 0
      :children []
-     :color color}))
+     :palette palette
+     :color (nth palette (rand-int (count palette)))}))
+
 
 (defn derive-new-angle [base negative depth]
   (Math.floor
@@ -107,7 +109,8 @@
                   :base-length (:base-length nd)
                   :depth depth
                   :children []
-                  :color (:color nd)}]
+                  :palette (:palette nd)
+                  :color (nth (:palette nd) (rand-int (count (:palette nd))))}]
     new-node))
 
 (def derive-north (partial derive-next 15))

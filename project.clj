@@ -37,7 +37,7 @@
                                         :pretty-print  true}}
                        :prod {:source-paths ["src/cljs"]
                               :compiler {:output-to "resources/public/prod/plantlife.js"
-;                                         :preambule ["js/react-0.11.2.min.js"]
+                                         :preambule ["js/react-0.12.2.min.js"]
 ;                                         :externs ["js/react-extern.js"]
                                          :optimizations :advanced
                                          :pretty-print false}}}}

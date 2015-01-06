@@ -61,7 +61,8 @@
                 (if (and
                       (b/branches-full? bzip)
                       (b/all-branches-full-length? bzip))
-                  (b/root-branch 400 800 100 -90 (b/choose-color))
+                  (let [prev-root-color (:palette (zip/root bzip))]
+                   (b/root-branch 400 800 100 -90 (b/choose-color prev-root-color)))
                   br)))))
         505))
 

@@ -26,12 +26,14 @@
 
 
 (defn choose-color [& current]
-  (let [cur (first current)]
-    (case (rand-int 3)
-      0 (:green palettes/palettes)
-      1 (:yellow palettes/palettes)
-      2 (:blue palettes/palettes)
-      3 (:brown palettes/palettes))))
+  (let [cur (first current)
+        colors  (remove
+                  #(= % cur)
+                  [(:green palettes/palettes)
+                  (:yellow palettes/palettes)
+                  (:blue palettes/palettes)
+                  (:brown palettes/palettes)])]
+     (nth colors (rand-int (count colors)))))
 
 (defn derive-control-points [length angle dest-x dest-y]
   (coords-at-r-angle

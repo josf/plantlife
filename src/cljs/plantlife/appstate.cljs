@@ -6,8 +6,8 @@
 
 (defonce app-state
   (atom {:branches []
-         :dimensions {:height nil :width nil}}))
+         :dimensions {:height nil :width nil}
+         :animated nil}))
 
 (defn dimensions []
   (om/ref-cursor (:dimensions (om/root-cursor app-state))))
-

@@ -100,7 +100,7 @@
 
         (js/setInterval
           (fn []
-            (om/transact! app :branches b/step-incomplete-branches))
+            (om/transact! app  b/step-incomplete-branches))
           42)
 
         (js/setInterval

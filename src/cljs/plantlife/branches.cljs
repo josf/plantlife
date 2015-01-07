@@ -245,32 +245,39 @@
         (complement zip/end?)
         (iterate zip/next branches-zip)))))
 
-(defn step-incomplete-branches [branches-cursor]
-  (zip/root 
-   (loop [loc (plz/plant-zip branches-cursor)]
-     (cond
-       (zip/end? loc)
-       loc
-      
-       (not (zip/branch? loc))
-       (recur (zip/next loc))
+(defn step-incomplete-branches [app-cursor]
+  (if (and
+        (:animated app-cursor)          ; might be nil first time thru
+        (> 42 (- (.getTime (js/Date.)) (:animated app-cursor))))
+    app-cursor
+    (assoc app-cursor
+      :animated (.getTime (js/Date.))
+      :branches
+      (zip/root 
+        (loop [loc (plz/plant-zip (:branches app-cursor))]
+          (cond
+            (zip/end? loc)
+            loc
+            
+            (not (zip/branch? loc))
+            (recur (zip/next loc))
 
-       (full-length-branch? loc)
-       (recur (zip/next loc))
+            (full-length-branch? loc)
+            (recur (zip/next loc))
 
-       true
-       (recur
-         (zip/next
-           (zip/edit
-             loc
-             (fn [n]
-               (let [[new-x new-y] (increment-branch-lengths
-                                     (:origin-x n)
-                                     (:origin-y n)
-                                     (:dest-x n)
-                                     (:dest-y n)
-                                     (:current-x n)
-                                     (:current-y n))]
-                 (assoc n
-                   :current-x new-x
-                   :current-y new-y))))))))))
+            true
+            (recur
+              (zip/next
+                (zip/edit
+                  loc
+                  (fn [n]
+                    (let [[new-x new-y] (increment-branch-lengths
+                                          (:origin-x n)
+                                          (:origin-y n)
+                                          (:dest-x n)
+                                          (:dest-y n)
+                                          (:current-x n)
+                                          (:current-y n))]
+                      (assoc n
+                        :current-x new-x
+                        :current-y new-y))))))))))))

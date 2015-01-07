@@ -13,6 +13,8 @@
   (atom {:branches []
          :dimensions {:height nil :width nil}}))
 
+(defn dimensions []
+  (om/ref-cursor (:dimensions (om/root-cursor app-state))))
 
 (defn all-branches [zip-tree]
   (map zip/node (take-while (complement zip/end?) (iterate zip/next zip-tree))))
@@ -80,6 +82,10 @@
             width (.-width size)]
         (om/set-state! owner :height height)
         (om/set-state! owner :width width)
+        (om/transact! app [:dimensions]
+          (fn [d]
+            (assoc d :height height :width width)))
+
 
         ;; our initial branch when mounting for the first time
         (when (empty? (:branches @app))
@@ -92,11 +98,11 @@
                -90
                (:green palettes/palettes)))))
 
-        
-        (js/setInterval
-          (fn []
-            (om/transact! app :branches b/add-next-branch))
-          500)
+        (let [dims (om/observe owner (dimensions))]
+          (js/setInterval
+            (fn []
+              (om/transact! app :branches (partial b/add-next-branch dims)))
+            500))
 
         (js/setInterval
           (fn []

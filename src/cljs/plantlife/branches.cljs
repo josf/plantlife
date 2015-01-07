@@ -164,7 +164,13 @@
      (= (:current-x nd) (:dest-x nd))
      (= (:current-y nd) (:dest-y nd)))))
 
-(defn next-available-branch [loc min-depth]
+(defn inside-svg? [loc width]
+  (let [nd (zip/node loc)
+        x (:origin-x nd)
+        y (:origin-y nd)]
+   (and (< x width) (pos? y))))
+
+(defn next-available-branch [loc min-depth width]
   (first
     (filter
       (fn [l]
@@ -172,17 +178,18 @@
           (zip/branch? l)
           (= min-depth (count (zip/path l)))
           (full-length-branch? l)
+          (inside-svg? loc width)
           (> 2 (count (zip/children l)))))
       (take-while (complement zip/end?) (iterate zip/next loc)))))
 
-(defn add-next-branch [branches-cursor]
+(defn add-next-branch [{:keys [width height]} branches-cursor]
   (let [max-depth 5
         bzip (plz/plant-zip branches-cursor)
         min-depth (min-avail-leaf-depth bzip)]
 
     (if (>= min-depth max-depth)
       branches-cursor
-      (let [target-loc (next-available-branch bzip min-depth)
+      (let [target-loc (next-available-branch bzip min-depth width)
             new-branches (when target-loc
                            (zip/edit
                              target-loc

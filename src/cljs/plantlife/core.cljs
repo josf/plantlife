@@ -5,16 +5,10 @@
             [sablono.core :as html :refer-macros [html]]
             [goog.dom :as gdom]
             [goog.dom.ViewportSizeMonitor :as vsm]
+            [plantlife.appstate :as app]
             [plantlife.zip :as plz]
             [plantlife.branches :as b]
             [plantlife.palettes :as palettes]))
-
-(defonce app-state
-  (atom {:branches []
-         :dimensions {:height nil :width nil}}))
-
-(defn dimensions []
-  (om/ref-cursor (:dimensions (om/root-cursor app-state))))
 
 (defn all-branches [zip-tree]
   (map zip/node (take-while (complement zip/end?) (iterate zip/next zip-tree))))
@@ -98,7 +92,7 @@
                -90
                (:green palettes/palettes)))))
 
-        (let [dims (om/observe owner (dimensions))]
+        (let [dims (om/observe owner (app/dimensions))]
           (js/setInterval
             (fn []
               (om/transact! app :branches (partial b/add-next-branch dims)))
@@ -147,7 +141,7 @@
         (render [_]
           (dom/div nil
            (om/build svg-view app nil)))))
-    app-state
+    app/app-state
     {:target (. js/document (getElementById "app"))}))
 
 

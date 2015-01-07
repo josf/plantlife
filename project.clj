@@ -34,13 +34,7 @@
                                         :preamble      ["react/react.min.js"]
  ;                                       :externs       ["react/externs/react.js"]
                                         :optimizations :none
-                                        :pretty-print  true}}
-                       :prod {:source-paths ["src/cljs"]
-                              :compiler {:output-to "resources/public/prod/plantlife.js"
-                                         :preambule ["js/react-0.12.2.min.js"]
-;                                         :externs ["js/react-extern.js"]
-                                         :optimizations :advanced
-                                         :pretty-print false}}}}
+                                        :pretty-print  true}}}}
 
   :profiles {:dev {:repl-options {:init-ns plantlife.server
                                   :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}

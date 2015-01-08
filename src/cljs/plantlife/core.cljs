@@ -10,9 +10,10 @@
             [plantlife.branches :as b]
             [plantlife.palettes :as palettes]))
 
+(enable-console-print!)
+
 (defn all-branches [zip-tree]
   (map zip/node (take-while (complement zip/end?) (iterate zip/next zip-tree))))
-
 
 (defn branch-view [branch owner]
   (reify

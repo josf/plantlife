@@ -207,11 +207,12 @@
           (zip/root new-branches)
           branches-cursor)))))
 
-(defn branches-full? [loc]
+(defn branches-full? [{width :width} loc]
   (let [filtered  (filter
                     (fn [l]
                       (and
                         (zip/branch? l)
+                        (inside-svg? l width)
                         (= (count (zip/path l)) 5)))
                     (take-while (complement zip/end?) (iterate zip/next loc)))]
     (and
@@ -237,10 +238,14 @@
        (Math.floor (+ current-y y-incr)))]))
 
 
-(defn all-branches-full-length? [branches-zip]
+(defn all-branches-full-length? [{width :width} branches-zip]
   (every?
     #(full-length-branch? %)
-    (filter zip/branch?
+    (filter
+      (fn [l]
+        (and
+          (zip/branch? l)
+          (inside-svg? l width)))
       (take-while
         (complement zip/end?)
         (iterate zip/next branches-zip)))))

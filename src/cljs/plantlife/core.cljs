@@ -55,7 +55,6 @@
   (let [x (rand-int width)
         y height
         ang  (start-angle x y width height)]
-    (println ang)
    [x y ang]))
 
 
@@ -80,7 +79,6 @@
           (fn [d]
             (assoc d :height height :width width)))
 
-
         ;; our initial branch when mounting for the first time
         (when (empty? (:branches @app))
           (om/transact! app :branches
@@ -96,32 +94,32 @@
           (js/setInterval
             (fn []
               (om/transact! app :branches (partial b/add-next-branch dims)))
-            500))
+            500)
 
-        (js/setInterval
-          (fn []
-            (om/transact! app  b/step-incomplete-branches))
-          42)
+          (js/setInterval
+            (fn []
+              (om/transact! app  b/step-incomplete-branches))
+            42)
 
-        (js/setInterval
-          (fn []
-            (om/transact! app :branches
-              (fn [br]
-                (let [bzip  (plz/plant-zip br)]
-                  (if (and
-                        (b/branches-full? bzip)
-                        (b/all-branches-full-length? bzip))
-                    (let [prev-root-color (:palette (zip/root bzip))
-                          [new-x new-y new-angle] (random-start-point width height)
-                          branch-length (Math.floor (/ (min height width) 6))]
-                      (b/root-branch
-                        new-x
-                        new-y
-                        branch-length
-                        new-angle
-                        (b/choose-color prev-root-color))) 
-                    br)))))
-          505)))
+          (js/setInterval
+            (fn []
+              (om/transact! app :branches
+                (fn [br]
+                  (let [bzip  (plz/plant-zip br)]
+                    (if (and
+                          (b/branches-full? dims bzip)
+                          (b/all-branches-full-length? dims bzip))
+                      (let [prev-root-color (:palette (zip/root bzip))
+                            [new-x new-y new-angle] (random-start-point width height)
+                            branch-length (Math.floor (/ (min height width) 6))]
+                        (b/root-branch
+                          new-x
+                          new-y
+                          branch-length
+                          new-angle
+                          (b/choose-color prev-root-color))) 
+                      br)))))
+            505))))
 
     om/IRenderState
     (render-state [_ state]
